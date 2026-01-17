@@ -1,0 +1,7 @@
+{
+  "Group": "net.goastcraft",
+  "Name": "HytaleStats",
+  "Version": "1.0.0",
+  "Main": "net.goastcraft.Main",
+  "IncludesAssetPack": true
+}

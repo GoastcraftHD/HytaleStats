@@ -1,0 +1,27 @@
+$C = "../Common.ui";
+
+$C.@PageOverlay {}
+
+$C.@Panel {
+    Anchor: (Width: 1000, Height: 750);
+    //Background: #1a1a2e(0.95);
+    Padding: (Full: 15);
+    LayoutMode: Top;
+
+    $C.@TitleLabel {
+        Text: "Stats";
+        Anchor: (Top: 0, Height: 50);
+    }
+
+    // Main Canvas
+    Group #StatsGrid {
+        FlexWeight: 1;
+        LayoutMode: TopScrolling;
+        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+    }
+
+    $C.@BackButton {
+        Anchor: (Bottom: 5, Left: 5);
+        Padding: (Top: 10);
+    }
+}

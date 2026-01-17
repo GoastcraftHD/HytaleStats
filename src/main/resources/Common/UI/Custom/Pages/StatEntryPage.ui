@@ -1,0 +1,24 @@
+Group {
+    Padding: 10;
+    FlexWeight: 1;
+
+    Group {
+        LayoutMode: Top;
+        Background: (TexturePath: "../Common/ContainerPanelPatch.png", Border: 4);
+
+        Group #Image {
+            Anchor: (Width: 150, Height: 150);
+            Background: (TexturePath: "Memories/npcs/Bison.png");
+        }
+
+        Label #StatName {
+            Style: (FontSize: 16, TextColor: #ffffff, Alignment: Center);
+            Text: "Bird";
+        }
+
+        Label #StatValue {
+            Style: (FontSize: 16, TextColor: #ffffff, Alignment: Center);
+            Text: "13";
+        }
+    }
+}
