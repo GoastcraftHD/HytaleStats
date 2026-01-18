@@ -26,6 +26,7 @@ public class BlockBreakListener extends EntityEventSystem<EntityStore, BreakBloc
 
         Ref<EntityStore> playerRef = archetypeChunk.getReferenceTo(index);
         Player player = store.getComponent(playerRef, Player.getComponentType());
+        if (player == null) return;
 
         Map<String, StatData.BlockData> saveData = Main.getMain().getStatData().getTypeData(player.getUuid().toString()).getBlockDataMap();
 

@@ -21,6 +21,19 @@ $C.@Panel {
         Label {
             Style: (FontSize: 30, TextColor: #ffffff);
             Padding: 10;
+            Text: "Player";
+        }
+
+        Group {
+            Padding: 15;
+            Label #TimePlayed {
+                Style: (FontSize: 16, TextColor: #ffffff);
+            }
+        }
+
+        Label {
+            Style: (FontSize: 30, TextColor: #ffffff);
+            Padding: 10;
             Text: "Mobs";
         }
 
@@ -32,7 +45,7 @@ $C.@Panel {
         Label {
             Style: (FontSize: 30, TextColor: #ffffff);
             Padding: 10;
-            Text: "Blocks";
+            Text: "Items";
         }
 
         Group #BlockStatsGrid {

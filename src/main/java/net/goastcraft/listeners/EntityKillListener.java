@@ -3,8 +3,6 @@ package net.goastcraft.listeners;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.EntityEventSystem;
-import com.hypixel.hytale.server.core.Message;
-import com.hypixel.hytale.server.core.entity.Entity;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
@@ -18,7 +16,6 @@ import net.goastcraft.data.StatData;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class EntityKillListener extends EntityEventSystem<EntityStore, Damage> {
@@ -66,14 +63,45 @@ public class EntityKillListener extends EntityEventSystem<EntityStore, Damage> {
             String playerUUID = player.getUuid().toString(); // TODO: Use newer method to obtain uuid
             Map<String, StatData.EntityData> saveData = Main.getMain().getStatData().getTypeData(playerUUID).getEntityDataMap();
 
-            if (saveData.containsKey(role.getNameTranslationKey())) {
-                StatData.EntityData statCount = saveData.get(role.getNameTranslationKey());
+            // Fix for entity variants that don't have their own translation message
+            String translationName = role.getNameTranslationKey();
+            switch (translationName) {
+                case "server.npcRoles.Template.name":
+                    translationName = "server.npcRoles.Mosshorn.name";
+                    break;
+                case "server.npcRoles.Frog_Blue.name":
+                    translationName = "server.npcRoles.Frog_Green.name";
+                    break;
+                default:
+                    break;
+            }
+
+            // Fix for entity variants that don't have their own icon
+            String roleName = role.getRoleName();
+            switch (roleName) {
+                case "Mosshorn_Plain":
+                    roleName = "Mosshorn";
+                    break;
+                case "Skeleton_Fighter_Patrol":
+                case "Skeleton_Fighter_Wander":
+                    roleName = "Skeleton_Fighter";
+                    break;
+                case "Frog_Blue":
+                case "Frog_Orange":
+                    roleName = "Frog_Green";
+                    break;
+                default:
+                    break;
+            }
+
+            if (saveData.containsKey(translationName)) {
+                StatData.EntityData statCount = saveData.get(translationName);
                 statCount.incrementKillCount();
-                saveData.put(role.getNameTranslationKey(), statCount);
+                saveData.put(translationName, statCount);
             } else {
-                StatData.EntityData statCount = new StatData.EntityData(role.getRoleName());
+                StatData.EntityData statCount = new StatData.EntityData(roleName);
                 statCount.incrementKillCount();
-                saveData.put(role.getNameTranslationKey(), statCount);
+                saveData.put(translationName, statCount);
             }
         }
     }

@@ -3,7 +3,6 @@ package net.goastcraft.pages;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.function.consumer.TriConsumer;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
@@ -15,9 +14,9 @@ import net.goastcraft.Main;
 import net.goastcraft.data.StatData;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class StatsPage extends InteractiveCustomUIPage<StatsPage.StatsData> {
 
@@ -80,8 +79,28 @@ public class StatsPage extends InteractiveCustomUIPage<StatsPage.StatsData> {
 
             cmd.set("#BlockStatsGrid[" + y + "][" + x + "] #StatContainer.TooltipText",
                     ("Placed: %d\n" +
-                     "Broken: %d").formatted(value.getPlaceCount(), value.getBreakCount()));
+                     "Broken: %d\n" +
+                     "Dropped: %d\n" +
+                     "Used: %d").formatted(value.getPlaceCount(), value.getBreakCount(), value.getDropCount(), value.getUseCount()));
         });
+
+        StatData.PlayerData playerData = typeData.getPlayerData();
+        double timePlayed = playerData.getTimePlayed() + Duration.between(playerData.getLastJoinDate(), Instant.now()).toSeconds();
+        String timePlayedTimeEnd = "s";
+
+        // Convert to minutes
+        if (timePlayed >= 60d) {
+            timePlayed = timePlayed / 60d;
+            timePlayedTimeEnd = "m";
+        }
+
+        // Convert to hours
+        if (timePlayed >= 60d) {
+            timePlayed = timePlayed / 60d;
+            timePlayedTimeEnd = "h";
+        }
+
+        cmd.set("#TimePlayed.Text", "Time played: %.2f%s".formatted(timePlayed, timePlayedTimeEnd));
     }
 
     @Override

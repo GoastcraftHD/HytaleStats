@@ -1,13 +1,13 @@
 package net.goastcraft;
 
 import com.google.gson.Gson;
+import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
+import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import net.goastcraft.commands.ShowStats;
 import net.goastcraft.data.StatData;
-import net.goastcraft.listeners.BlockBreakListener;
-import net.goastcraft.listeners.BlockPlaceListener;
-import net.goastcraft.listeners.EntityKillListener;
+import net.goastcraft.listeners.*;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.io.IOException;
@@ -45,6 +45,12 @@ public class Main extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new EntityKillListener());
         this.getEntityStoreRegistry().registerSystem(new BlockBreakListener());
         this.getEntityStoreRegistry().registerSystem(new BlockPlaceListener());
+        this.getEntityStoreRegistry().registerSystem(new CraftRecipeListener());
+        this.getEntityStoreRegistry().registerSystem(new DropItemListener());
+        this.getEntityStoreRegistry().registerSystem(new UseBlockListener());
+
+        this.getEventRegistry().registerGlobal(PlayerReadyEvent.class, PlayerReadyListener::onPlayerReady);
+        this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, PlayerDisconnectListener::onPlayerDisconnect);
     }
 
     @Override
