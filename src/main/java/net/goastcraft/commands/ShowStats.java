@@ -3,6 +3,7 @@ package net.goastcraft.commands;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.sentry.SkipSentryException;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -22,12 +23,16 @@ import com.hypixel.hytale.server.spawning.ISpawnableWithModel;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.goastcraft.pages.StatsPage;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ShowStats extends AbstractPlayerCommand {
     public ShowStats(@NonNullDecl String name, @NonNullDecl String description, boolean requiresConfirmation) {
         super(name, description, requiresConfirmation);
+
+        setPermissionGroup(GameMode.Adventure);
     }
 
     @Override

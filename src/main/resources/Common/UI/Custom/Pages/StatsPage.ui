@@ -4,7 +4,6 @@ $C.@PageOverlay {}
 
 $C.@Panel {
     Anchor: (Width: 1000, Height: 750);
-    //Background: #1a1a2e(0.95);
     Padding: (Full: 15);
     LayoutMode: Top;
 
@@ -18,6 +17,28 @@ $C.@Panel {
         FlexWeight: 1;
         LayoutMode: TopScrolling;
         ScrollbarStyle: $C.@DefaultScrollbarStyle;
+
+        Label {
+            Style: (FontSize: 30, TextColor: #ffffff);
+            Padding: 10;
+            Text: "Mobs";
+        }
+
+        Group #EntityStatsGrid {
+            FlexWeight: 1;
+            LayoutMode: Top;
+        }
+
+        Label {
+            Style: (FontSize: 30, TextColor: #ffffff);
+            Padding: 10;
+            Text: "Blocks";
+        }
+
+        Group #BlockStatsGrid {
+            FlexWeight: 1;
+            LayoutMode: Top;
+        }
     }
 
     $C.@BackButton {

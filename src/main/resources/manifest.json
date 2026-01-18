@@ -1,6 +1,12 @@
 {
   "Group": "net.goastcraft",
-  "Name": "HytaleStats",
+  "Name": "BetterStats",
+  "Description": "BetterStats adds a UI panel that tracks and displays a wide range of player statistics, such as mobs killed, blocks mined, and total time played.",
+  "Authors": [
+    {
+      "Name": "Goastcraft"
+    }
+  ],
   "Version": "1.0.0",
   "Main": "net.goastcraft.Main",
   "IncludesAssetPack": true

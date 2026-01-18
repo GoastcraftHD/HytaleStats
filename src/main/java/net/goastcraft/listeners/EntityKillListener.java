@@ -36,10 +36,25 @@ public class EntityKillListener extends EntityEventSystem<EntityStore, Damage> {
         if (healthStat.get() != 0) return;
 
         Ref<EntityStore> entityStoreRef = archetypeChunk.getReferenceTo(index);
-        NPCEntity npcComponent = commandBuffer.getComponent(entityStoreRef, NPCEntity.getComponentType());
-        if (npcComponent == null) return;
+        NPCEntity npc = commandBuffer.getComponent(entityStoreRef, NPCEntity.getComponentType());
+        if (npc != null) {
+            handleNPC(npc, event, store);
+        }
 
-        Role role = npcComponent.getRole();
+        Player player = commandBuffer.getComponent(entityStoreRef, Player.getComponentType());
+        if (player != null) {
+            handlePlayer(player, event, store);
+        }
+    }
+
+    @NullableDecl
+    @Override
+    public Query<EntityStore> getQuery() {
+        return Archetype.empty();
+    }
+
+    private void handleNPC(NPCEntity npc, Damage event, Store<EntityStore> store) {
+        Role role = npc.getRole();
 
         if (event.getSource() instanceof Damage.EntitySource entitySource) {
             Ref<EntityStore> sourceRef = entitySource.getRef();
@@ -53,18 +68,38 @@ public class EntityKillListener extends EntityEventSystem<EntityStore, Damage> {
 
             if (saveData.containsKey(role.getNameTranslationKey())) {
                 StatData.EntityData statCount = saveData.get(role.getNameTranslationKey());
-                statCount.incrementCount();
+                statCount.incrementKillCount();
                 saveData.put(role.getNameTranslationKey(), statCount);
             } else {
-                StatData.EntityData statCount = new StatData.EntityData(role.getRoleName(), 1);
+                StatData.EntityData statCount = new StatData.EntityData(role.getRoleName());
+                statCount.incrementKillCount();
                 saveData.put(role.getNameTranslationKey(), statCount);
             }
         }
     }
 
-    @NullableDecl
-    @Override
-    public Query<EntityStore> getQuery() {
-        return Archetype.empty();
+    private void handlePlayer(Player player, Damage event, Store<EntityStore> store) {
+        if (event.getSource() instanceof Damage.EntitySource entitySource) {
+            Ref<EntityStore> sourceRef = entitySource.getRef();
+            if (!sourceRef.isValid()) return;
+
+            NPCEntity npc = store.getComponent(sourceRef, NPCEntity.getComponentType());
+            if (npc == null) return;
+
+            Role role = npc.getRole();
+
+            String playerUUID = player.getUuid().toString();
+            Map<String, StatData.EntityData> saveData = Main.getMain().getStatData().getTypeData(playerUUID).getEntityDataMap();
+
+            if (saveData.containsKey(role.getNameTranslationKey())) {
+                StatData.EntityData statCount = saveData.get(role.getNameTranslationKey());
+                statCount.incrementDeathCount();
+                saveData.put(role.getNameTranslationKey(), statCount);
+            } else {
+                StatData.EntityData statCount = new StatData.EntityData(role.getRoleName());
+                statCount.incrementDeathCount();
+                saveData.put(role.getNameTranslationKey(), statCount);
+            }
+        }
     }
 }

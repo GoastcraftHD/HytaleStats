@@ -1,1 +1,1 @@
-rootProject.name = "HytaleStats"
+rootProject.name = "BetterStats"

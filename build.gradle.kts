@@ -26,7 +26,7 @@ tasks.test {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    from("stc/main/resources")
+    from("src/main/resources")
 
     destinationDirectory.set(file("C:\\Users\\simon\\Desktop\\Hytale\\mods"))
 }

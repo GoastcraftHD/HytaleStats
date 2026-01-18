@@ -5,6 +5,8 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import net.goastcraft.commands.ShowStats;
 import net.goastcraft.data.StatData;
+import net.goastcraft.listeners.BlockBreakListener;
+import net.goastcraft.listeners.BlockPlaceListener;
 import net.goastcraft.listeners.EntityKillListener;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -41,6 +43,8 @@ public class Main extends JavaPlugin {
         this.getCommandRegistry().registerCommand(new ShowStats("Stats", "Shows all stats", false));
 
         this.getEntityStoreRegistry().registerSystem(new EntityKillListener());
+        this.getEntityStoreRegistry().registerSystem(new BlockBreakListener());
+        this.getEntityStoreRegistry().registerSystem(new BlockPlaceListener());
     }
 
     @Override

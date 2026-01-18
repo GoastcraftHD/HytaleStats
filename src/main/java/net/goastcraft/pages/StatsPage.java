@@ -3,6 +3,7 @@ package net.goastcraft.pages;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.function.consumer.TriConsumer;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
@@ -15,8 +16,15 @@ import net.goastcraft.data.StatData;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class StatsPage extends InteractiveCustomUIPage<StatsPage.StatsData> {
+
+    @FunctionalInterface
+    interface GridAction<T> {
+        void accept(UICommandBuilder cmd, int x, int y, String key, T value);
+    }
 
     public static class StatsData {
         public static final BuilderCodec<StatsData> CODEC =
@@ -27,26 +35,17 @@ public class StatsPage extends InteractiveCustomUIPage<StatsPage.StatsData> {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, StatsData.CODEC);
     }
 
-    @Override
-    public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder cmd, @NonNullDecl UIEventBuilder event, @NonNullDecl Store<EntityStore> store) {
-        cmd.append("Pages/StatsPage.ui");
-
-        StatData.TypeData typeData = Main.getMain().getStatData().getTypeData(playerRef.getUuid().toString());
-
+    private <T> void addStatsGrid(UICommandBuilder cmd, String gridName, Map<String, T> statMap, GridAction<T> action) {
         int x = 0;
         int y = 0;
-        for (Map.Entry<String, StatData.EntityData> entry : typeData.getEntityDataMap().entrySet()) { // Hardcode ENTITY type for now
-
-            StatData.EntityData statData = entry.getValue();
+        for (Map.Entry<String, T> entry : statMap.entrySet()) {
 
             if (x == 0) {
-                cmd.appendInline("#StatsGrid", "Group { LayoutMode: Left; }");
+                cmd.appendInline(gridName, "Group { LayoutMode: Left; }");
             }
 
-            cmd.append("#StatsGrid[" + y + "]", "Pages/StatEntryPage.ui");
-            cmd.set("#StatsGrid[" + y + "][" + x + "] #StatName.Text", Message.translation(entry.getKey()).getAnsiMessage());
-            cmd.set("#StatsGrid[" + y + "][" + x + "] #StatValue.Text", String.valueOf(statData.getCount()));
-            cmd.set("#StatsGrid[" + y + "][" + x + "] #Image.Background", "Pages/Memories/npcs/" + statData.getName() + ".png");
+            cmd.append(gridName + "[" + y + "]", "Pages/StatEntryPage.ui");
+            action.accept(cmd, x, y,  entry.getKey(), entry.getValue());
 
             x++;
             if (x >= 3) {
@@ -55,9 +54,34 @@ public class StatsPage extends InteractiveCustomUIPage<StatsPage.StatsData> {
             }
         }
 
-        if (typeData.getEntityDataMap().isEmpty()) {
-            cmd.appendInline("#StatsGrid", "Label #StatName { Style: (FontSize: 25, TextColor: #ffffff); Padding: 10; Text: \"Nothing here yet\";}");
+        if (statMap.isEmpty()) {
+            cmd.appendInline(gridName, "Label #StatName { Style: (FontSize: 25, TextColor: #ffffff); Padding: 10; Text: \"Nothing here yet\";}");
         }
+    }
+
+    @Override
+    public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder cmd, @NonNullDecl UIEventBuilder event, @NonNullDecl Store<EntityStore> store) {
+        cmd.append("Pages/StatsPage.ui");
+
+        StatData.TypeData typeData = Main.getMain().getStatData().getTypeData(playerRef.getUuid().toString());
+
+        addStatsGrid(cmd, "#EntityStatsGrid", typeData.getEntityDataMap(), (builder, x, y, key, value) -> {
+            cmd.set("#EntityStatsGrid[" + y + "][" + x + "] #StatName.Text", Message.translation(key).getAnsiMessage());
+            cmd.set("#EntityStatsGrid[" + y + "][" + x + "] #Image.Background", "Pages/Memories/npcs/" + value.getName() + ".png");
+
+            cmd.set("#EntityStatsGrid[" + y + "][" + x + "] #StatContainer.TooltipText",
+                    ("Killed: %d\n" +
+                     "Died to: %d").formatted(value.getKillCount(), value.getDeathCount()));
+        });
+
+        addStatsGrid(cmd, "#BlockStatsGrid", typeData.getBlockDataMap(), (builder, x, y, key, value) -> {
+            cmd.set("#BlockStatsGrid[" + y + "][" + x + "] #StatName.Text", Message.translation(value.getName()).getAnsiMessage());
+            cmd.set("#BlockStatsGrid[" + y + "][" + x + "] #Image.Background", value.getIcon());
+
+            cmd.set("#BlockStatsGrid[" + y + "][" + x + "] #StatContainer.TooltipText",
+                    ("Placed: %d\n" +
+                     "Broken: %d").formatted(value.getPlaceCount(), value.getBreakCount()));
+        });
     }
 
     @Override
