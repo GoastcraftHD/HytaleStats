@@ -6,8 +6,11 @@
 - In-game statistics UI panel
 - **/stats** command to open the menu
 - Mob kill count
+- Died to Mob count
+- Blocks placed count
+- Blocks mined count
 - More to come soon
 
 ### Current Status
-At the moment, the mod only tracks **mobs killed**.  
+At the moment, the mod only tracks **mobs killed**, **killed by mobs**, **blacks mined**, **blocks placed**.  
 Additional statistics (blocks mined, playtime, and more) are actively planned and will be added soon.
